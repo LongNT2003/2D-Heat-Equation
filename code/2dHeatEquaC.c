@@ -1,11 +1,12 @@
-// code C for compare result
+// %%writefile 2dHeatEqua.c
+
 #include <stdio.h>
 #include <malloc.h>
-#define N 12
+#define N 1024
 #define c 0.002
 #define delta_t 0.05
 #define delta_s 0.04
-#define Ntime 125
+#define Ntime 1000
 
 void initData(float *T){
     for (int i=0;i<N;i++){
@@ -14,7 +15,7 @@ void initData(float *T){
         }
     }
 
-}
+};
 void printData(float *T) {
     for (int i = 0; i <= N -1; i++) {
         for (int j = 0; j <= N -1; j++) {
@@ -22,9 +23,9 @@ void printData(float *T) {
         }
         printf("\n");
     }
-}
+};
 //=========================
-__global__ void Derivative(float *T, float *dT){
+void Derivative(float *T, float *dT){
     float up,down,left,right,cen;  
     for (int row=0;row<N;row++) {
         for (int col=0;col<N;col++){
@@ -36,8 +37,8 @@ __global__ void Derivative(float *T, float *dT){
             *(dT+row*(N)+col) = c*(up+down+left+right-4*cen)/(delta_s*delta_s);
         }    
     }
-}
-__global__ void SolvingODE(float *T,float *dT) 
+};
+void SolvingODE(float *T,float *dT) 
 {
 	int row,col;
         
@@ -53,11 +54,11 @@ int main(int argc, char **argv){
     float *T,*dT;
     T=(float *)malloc((N) * (N) * sizeof(float));
     dT=(float *)malloc((N) * (N) * sizeof(float));
-    initData(Tcpu);
+    initData(T);
     for (int t=0;t<Ntime;t++) {
              Derivative(T,dT);
              SolvingODE(T,dT);
          }
-    printData(Tcpu);
+    printData(T);
     return 0;
 }

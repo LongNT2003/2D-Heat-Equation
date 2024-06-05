@@ -1,16 +1,17 @@
+// %%writefile 2dHeatEquacuda.cu
 // this implement with multiple dimension grid and block
 #include <stdio.h>
 #include <malloc.h>
 #include <cuda.h>
-#define N 12
+#define N 1024
 #define c 0.002
 #define delta_t 0.05
 #define delta_s 0.04
-#define Ntime 125
-#define GridSizeX 2
-#define GridSizeY 3
-#define BlockSizeX 3
-#define BlockSizeY 2
+#define Ntime 1000
+#define GridSizeX 64
+#define GridSizeY 64
+#define BlockSizeX 16
+#define BlockSizeY 16
 #define ThreadSizeX N/(GridSizeX*BlockSizeX)
 #define ThreadSizeY N/(GridSizeY*BlockSizeY)
 void initData(float *T){
@@ -48,8 +49,9 @@ __global__ void Derivative(float *T, float *dT){
             left = (col==0) ? 25.0 : *(T+ row*(N) +col-1);
             *(dT+row*(N)+col) = c*(up+down+left+right-4*cen)/(delta_s*delta_s);
         }
-      __syncthreads();
+      
     }
+    __syncthreads();
 }
 __global__ void SolvingODE(float *T,float *dT) 
 {
