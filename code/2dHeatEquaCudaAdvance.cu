@@ -78,8 +78,8 @@ int main(int argc, char **argv){
     initData(Tcpu);
     //1b. Delare and Allocate Mem on GPU
     float *Tgpu,*dTgpu;
-    cudaMalloc((void**)&Tgpu ,N*N*sizeof(int));
-    cudaMalloc((void**)&dTgpu,N*N*sizeof(int));
+    cudaMalloc((void**)&Tgpu ,N*N*sizeof(float));
+    cudaMalloc((void**)&dTgpu,N*N*sizeof(float));
     //2. Copy Input from CPU to GPU
     cudaMemcpy(Tgpu,Tcpu,N*N*sizeof(int),cudaMemcpyHostToDevice);
     //3. Define Block and Thread Structure
